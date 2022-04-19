@@ -2,6 +2,8 @@ from pyexpat import model
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+from sqlalchemy import false
+
 db = SQLAlchemy ()
 
 class User(db.Model):
@@ -10,87 +12,49 @@ class User(db.Model):
     __tablename__ = "users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.String, unique=True)
-    password = db.Column(db.String)
-    fname = db.Column(db.String)
-    lname = db.Column(db.String)
-    city = db.Column(db.String)
+    email = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String, nullable=False)
+    fname = db.Column(db.String(10), nullable=False)
+    lname = db.Column(db.String(25), nullable = False)
+    city = db.Column(db.String, nullable=False)
+    img_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+
+    posts = db.relationship('Post', backref='author', lazy=True)
     
-    organizations = db.relationship('Organization', secondary = "users_organizations", back_populates="users")
-    # users = db.relationship('User', back_populates="users")
 
     def __repr__(self):
-        return f"<User user_id={self.user_id} email={self.email} fname={self.fname} lname={self.lname}>"
+        return f"<User email={self.email} fname={self.fname} image={self.img_file}>"
 
+class Post(db.Model):
+    """ Posts/listings """
 
+    __tablename__= "posts"
 
-class Organization(db.Model):
-    """Table for Organizations and entities"""
-
-    __tablename__ = "organizations"
+    post_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    title = db.Column(db.String(100), nullable = False)
+    date_posted = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     
-    org_id = db.Column (db.Integer, autoincrement = True, primary_key=True)
-    org_name = db.Column (db.String, nullable=False)
-    org_contact = db.Column (db.String, nullable=False)
-    org_leader = db.Column (db.String)
-    org_details = db.Column (db.String)
-    
-    users = db.relationship('User', secondary = "users_organizations", back_populates="organizations")
-
-
     def __repr__(self):
-        return f"<Organization org_id={self.org_id}  org_name={self.org_name} org_contact={self.org_contact} >"
-
-
-class UsersOrganization(db.Model):
-    """Users oganization - middle table"""
-
-    __tablename__ = "users_organizations"
+        return f"<Post title={self.title} date={self.date_posted}>"
 
     
-    users_org_id = db.Column (db.Integer, autoincrement = True, primary_key=True)
-    org_id = db.Column(db.Integer, db.ForeignKey("organizations.org_id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
-
-
-
-    def __repr__(self):
-        return f"<Users organization id={self.users_org_id}>"
-
 
 class Volunteer(db.Model):
-    """Create Volunteers"""
+    """Create Volunteers""" 
 
     __tablename__ = "volunteers"
 
-
     volunteer_id = db.Column (db.Integer, autoincrement = True, primary_key=True)
-    user_listing_id = db.Column(db.Integer, db.ForeignKey("listings.user_listing_id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
-   
-    # listings = db.relationship('Listing', back_populates="volunteers")
-    # users = db.relationship('User', back_populates="volunteers")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.post_id'), nullable=False)
+
+    user = db.relationship('User', backref = 'volunteers')
+    post = db.relationship('Post', backref = 'volunteers')
 
     def __repr__(self):
-        return f"<Volunteer volunteer_id={self.volunteer_id}>"
-
-class Listing(db.Model):
-    """Volunteering listing roles"""
-
-    __tablename__ = "listings"
-
-    user_listing_id = db.Column (db.Integer, autoincrement = True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
-    org_id = db.Column(db.Integer, db.ForeignKey("organizations.org_id"))
-    written_text = db.Column (db.String, nullable=False)
-    media_location = db.Column (db.String, nullable=False)
-
-
-    # organizations = db.relationship('Organization', back_populates="listings")
-    # users = db.relationship('User', back_populates="listings")
-
-    def __repr__(self):
-        return f"<Listing listing_id={self.volunteer_id}>"
+        return f"<Volunteer id={self.volunteer_id}>"
 
 
 def connect_to_db(flask_app, db_uri="postgresql:///volunteering", echo=True):
