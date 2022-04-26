@@ -1,0 +1,39 @@
+[
+    {
+    
+        "title" : "help needed",
+        "opp_photo": "default.png",
+        "date_posted" : "2022-04-08",
+        "content": "first post, this is a test.",
+        "organization_id": 1
+       
+    },
+    {
+
+        "title" : "help needed",
+        "opp_photo": "default.png",
+        "date_posted" : "2022-04-08",
+        "content": "first post, this is a test.",
+        "organization_id": 2
+        
+       
+    },
+    {
+
+        "title" : "help needed",
+        "opp_photo": "default.png",
+        "date_posted" : "2022-04-08",
+        "content": "first post, this is a test.",
+        "organization_id": 3
+    
+    },
+    {
+      
+        "title" : "help needed",
+        "opp_photo": "default.png",
+        "date_posted" : "2022-04-08",
+        "content": "first post, this is a test.",
+        "organization_id": 1
+     
+    }
+]

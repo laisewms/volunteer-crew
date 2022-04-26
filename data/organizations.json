@@ -1,0 +1,20 @@
+[
+    {
+        "organization_name":"Help blue",
+        "organization_photo": "default.png",
+        "organization_email": "red@blue.com",
+        "organization_password": "1234"
+    },
+    {
+        "organization_name":"help red",
+        "organization_photo": "default.png",
+        "organization_email": "help@123.com",
+        "organization_password": "123"
+    },
+    {
+        "organization_name":"help yellow",
+        "organization_photo": "default.png",
+        "organization_email": "help@yellow",
+        "organization_password": "12345"
+    }
+]

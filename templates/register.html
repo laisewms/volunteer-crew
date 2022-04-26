@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content%}
+
+<!-- design block -->
+<section class="">
+    <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+      <div class="container">
+        <div class="row gx-lg-5 align-items-center">
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <h1 class="my-5 display-3 fw-bold ls-tight">
+              Join The<br />
+              <span class="text-primary">Volunteer Crew Today.</span>
+            </h1>
+            <p class ="slogan-p">
+                Because isn't it a true happiness to help others?
+            </p>
+          </div>
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="card">
+              <div class="card-body py-5 px-md-5">
+                <form action="/register" method="POST"> 
+                  <!-- 2 column grid layout with text inputs for the first and last names -->
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        <input type="text" id="form3Example1" name="fname" class="form-control" />
+                        <label class="form-label" for="form3Example1">First name or organization</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        <input type="text" id="form3Example2" name="lname" class="form-control" />
+                        <label class="form-label" for="form3Example2">Last name</label>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <!-- Email input -->
+                  <div class="form-outline mb-4">
+                    <input type="email" name="email" id="form3Example3" class="form-control" />
+                    <label class="form-label" for="form3Example3">Email address</label>
+                  </div>
+  
+                  <!-- Password input -->
+                  <div class="form-outline mb-4">
+                    <input type="password" name = "password" id="form3Example4" class="form-control" />
+                    <label class="form-label" for="form3Example4">Password</label>
+                  </div>
+                  <!-- Radio btn -->
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="user_type" id="inlineRadio1" value="volunteer">
+                    <label class="form-check-label" for="inlineRadio1">Volunteer</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="user_type" id="inlineRadio2" value="organization">
+                    <label class="form-check-label" for="inlineRadio2">Organization</label>
+                  </div>
+                  
+                  <!-- Submit button -->
+                  <button type="submit" class="btn btn-primary btn-block mb-4">
+                    Sign up
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
