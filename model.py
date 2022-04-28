@@ -16,9 +16,12 @@ class Organization(db.Model):
 
     organization_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     organization_name = db.Column(db.String(120), unique=True)
-    organization_photo = db.Column(db.String(40), nullable =False, default='default.png')
+    organization_photo = db.Column(db.String(40), default='default.png')
     organization_email = db.Column(db.String(150), nullable =False)
+    organization_bio = db.Column(db.String)
+    organization_city = db.Column(db.String)
     organization_password = db.Column(db.String(35), nullable =False)
+
 
     volunteer_opportunity = db.relationship("VolunteerOpportunity", back_populates ="organizations")
  
@@ -34,7 +37,7 @@ class VolunteerOpportunity(db.Model):
 
     volunteer_opt_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable = False)
-    opp_photo = db.Column(db.String(100), nullable = False)
+    opp_photo = db.Column(db.String, nullable = True)
     date_posted = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     organization_id = db.Column(db.Integer, db.ForeignKey('organizations.organization_id'), nullable=False)
@@ -71,10 +74,15 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     fname = db.Column(db.String(10), nullable=False)
     lname = db.Column(db.String(50), nullable=False)
+    bio = db.Column(db.String)
+    city = db.Column(db.String)
+    profile_photo = db.Column(db.String)
    
     
     def __repr__(self):
         return f"<User: email={self.email}, fname={self.fname}, lname={self.lname}>"
+
+
 
 
 

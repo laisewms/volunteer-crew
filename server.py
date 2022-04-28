@@ -1,8 +1,14 @@
-from crypt import methods
 from flask import Flask, render_template, request, flash, session, redirect
 from model import Organization, connect_to_db, db
 import crud
- 
+import cloudinary.uploader
+import os
+
+
+
+CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
+CLOUDINARY_SECRET = os.environ['CLOUDINARY_SECRET']
+CLOUD_NAME = "dbh6sbsv3"
 
 
 app = Flask(__name__)
@@ -11,6 +17,7 @@ app.secret_key = "dev"
 
 
 @app.route("/")
+@app.route("/home")
 def homepage():
     """View homepage."""
 
@@ -23,6 +30,11 @@ def log_in():
 
     return render_template('login.html')
 
+@app.route("/logout")
+def log_out():
+    """ Will log out the user"""
+    session.clear()
+    return redirect("/")
 
 @app.route("/login",methods=["POST"])
 def process_log_in():
@@ -55,7 +67,7 @@ def process_log_in():
         else:
             session['organization_id']= organization.organization_id
             flash(f"welcome back {organization.organization_name}")
-            return redirect("/opportunities")
+            return redirect("/oportunities")
     else:   
         flash(f"Please select volunteer or organization")
         return redirect("/login")
@@ -117,12 +129,14 @@ def register_volunteer():
         flash(f"Please select Volunteer or Organization when signing up")
         return redirect("/register")
 
-
 # NAAAAAAO APAGAAR ESSE CARALHOOOOOOOO
 @app.route("/opportunities")
 def volunteer_opportunity():
     """ make sure the user doesnt go to pages withou log in"""
 
+
+    volunteer_opps = crud.get_all_volunteer_opportunities()
+    volunteer_opps = volunteer_opps[::-1]
 
     # check_logged_user = session.get('user')
     # user = crud.get_vol_by_email(check_logged_user)
@@ -133,14 +147,25 @@ def volunteer_opportunity():
 
     # else:
     
-    return render_template("volunteer-opportunities.html")
+    return render_template("volunteer-opportunities.html", volunteer_opps = volunteer_opps)
 
-@app.route("/org-homepage")
-def organizations_home():
-    """View homepage."""
+@app.route("/profile")
+def profile():
+    """View user profile"""
 
-    return render_template('org-homepage.html', title='Home')
+    return render_template('profile.html')
 
+@app.route("/organizations")
+def organizations():
+    """View user profile"""
+
+    return render_template('organizations.html')
+
+@app.route("/volunteers")
+def volunteers():
+    """View user profile"""
+
+    return render_template('volunteers.html')
 
 @app.route("/dash-vol", methods=["GET"])
 def vol_dash():
@@ -158,27 +183,64 @@ def vol_dash():
 
 
 
-@app.route("/register_opportunity", methods=["POST"])
+
+@app.route("/new_post", methods=["POST"])
 def register_opportunity():
 
-    title = request.form.get("title")
-    content = request.form.get("content")
-    opp_photo = request.files.get('opp_photo')
-    organization_id = request.form.get("organization_id")
+    title = request.json.get("title")
+    content = request.json.get("content")
+    opp_photo = request.json.get('opp_photo')
 
-    # organization_id = request.files.get('o')
+    # title = request.form.get("title")
+    # content = request.form.get("content")
+    # opp_photo = request.files.get('opp_photo')
+
+
+    print("******************")
+    print(title)
+    print(content)
+    print(opp_photo)
+    print("******************")
+
+
+
+    if opp_photo:
+
+        result = cloudinary.uploader.upload(opp_photo,
+                                            api_key=CLOUDINARY_KEY,
+                                            api_secret=CLOUDINARY_SECRET,
+                                            cloud_name=CLOUD_NAME)
+        img_url = result['secure_url']
+    else:
+        img_url = None
+    
+    print("******************")
+    print(img_url)
+    print("******************")
+    
+    # organization_id = request.form.get("organization_id")
+
     # WILL GET THIS WITH THE SESSION
 
     if 'organization_id' in session:
-        new_opp = crud.create_volunteer_opportunity(title=title,opp_photo=opp_photo,content=content, organization_id=organization_id)
+        new_opp = crud.create_volunteer_opportunity(title=title,opp_photo=img_url,content=content, organization_id=session['organization_id'])
     
         db.session.add(new_opp)
         db.session.commit()
         flash("Your message has been posted")
-        return redirect("/opportunities")
+        
 
-    else:
-        return redirect("/opportunities")
+    return redirect("/opportunities")
+
+
+
+# @app.route("/new_post")
+# def new_post():
+#     if 'user_id' in session:
+#        return redirect("/opportunities") 
+
+#     return redirect("/")
+
 
 @app.route("/opportunities-listed/<organization_id>")
 def opportunities_listed(organization_id):
@@ -187,17 +249,6 @@ def opportunities_listed(organization_id):
     org = crud.get_org_by_id(organization_id)
 
     return render_template("display_by_id.html", org = org)
-
-@app.route("/new_post")
-def new_post():
-
-
-
-
-
-    return render_template("create_post.html", title="New Post")
-
-
 
 
 

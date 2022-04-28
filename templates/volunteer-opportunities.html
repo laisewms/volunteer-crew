@@ -3,22 +3,67 @@
 
 <h1>Volunteer Opportunities </h1>
 
-<div class="container">
-    <form action="/register_opportunity" method="POST" enctype="multipart/form-data">
-        <h2> New volunteer opportunities</h2>
-            <div>Title:
-                <input type="text" name="title">
-            </div>
-            <textarea id="w3review" name="content" rows="4" cols="50"></textarea>
-            <div class="form-group">
-            <label for="exampleFormControlFile1">Photo</label>
-            <input type="file" name="opp_photo" class="form-control-file" id="exampleFormControlFile1">
-            <button type="submit" class="btn btn-primary">submit</button> 
-            </div>
+{% if 'organization_id' in session %}
 
-        
-    </form>
+<div class="container">
+	<div class="row">
+	    
+	    <div class="col-md-8 col-md-offset-2">
+	        
+    		<h1>Create post</h1>
+    		
+    		<form class="submit-post" action="/new_post" method="POST" enctype="multipart/form-data">
+    		    
+    		    <div class="form-group has-error">
+    		        <label for="title">Title</label>
+    		        <input type="text" id="post-title" class="form-control" name="title" />
+    		    </div>
+    		    
+    		    <div class="form-group">
+    		        <label for="description">Description</label>
+    		        <textarea rows="5" id="post-content" class="form-control" name="content" ></textarea>
+    		    </div>
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">Photo</label>
+                    <input type="file" id = "post-photo" class="form-control-file" name="opp_photo" id="exampleFormControlFile1">
+                </div>
+    		    
+    		    <div class="form-group">
+    		        <button type="submit" class="btn btn-primary">
+    		            Create
+    		        </button>
+    		        <button class="btn btn-default">
+    		            Cancel
+    		        </button>
+    		    </div>
+    		    
+    		</form>
+		</div>
+		
+	</div>
 </div>
+
+
+
+
+{% endif %}
+
+{% for opp in volunteer_opps %}
+
+    <h2>{{opp.title}}</h2>
+    <p>{{opp.content}}</p>
+	{% if opp.opp_photo %}
+
+		<img src="{{opp.opp_photo}}" alt="volunteer_opp_photo">
+		
+	{% endif %}
+    <p>{{opp.date_posted}}</p>
+    <p>{{opp.organizations.organization_name}}</p>
+
+{% endfor %}
+
+
+
 
 
 
